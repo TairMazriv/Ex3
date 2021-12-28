@@ -1,7 +1,7 @@
 class Edge(object):
-    def __init__(self, src:int, dst:int, w:float):
+    def __init__(self, src:int, dest:int, w:float):
         self.src = src
-        self.dst = dst
+        self.dest = dest
         self.w = w
 
     def __str__(self):
@@ -17,7 +17,7 @@ class Edge(object):
     #     self.id = id
 
     def getDst(self):
-        return self.dst
+        return self.dest
 
     # def setPos(self, pos):
     #     self.pos = pos

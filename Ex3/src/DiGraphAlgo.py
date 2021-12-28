@@ -1,9 +1,10 @@
+import json
 import sys
 from typing import List
 import threading, queue
 from DiGraph import DiGraph
-from src import GraphInterface, Node
-from src.GraphAlgoInterface import GraphAlgoInterface
+import GraphInterface, Node
+from GraphAlgoInterface import GraphAlgoInterface
 
 
 class DiGraphAlgo(GraphAlgoInterface):
@@ -14,12 +15,21 @@ class DiGraphAlgo(GraphAlgoInterface):
         return self._GRAPH
 
     def load_from_json(self, file_name: str) -> bool:
-        pass
+        try:
+            with open(file_name, "r") as fn:
+                load = json.load(fn)
+                graph = DiGraph()
+                for node in load["Nodes"]:
+                    graph.add_node(node["id"], node["pos"])
+                for edge in load["Edges"]:
+                    graph.add_edge(edge["src"], edge["dest"], edge["w"])
+                return graph
+        except IOError as er:
+            print(er)
 
     def save_to_json(self, file_name: str) -> bool:
         pass
 
-    
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         pass
 

@@ -39,7 +39,7 @@ class DiGraph(GraphInterface):
         if {"src": id1,"dest": id2} in self.edges.keys():
             return False
         else:
-            self.edges[{"src": id1,"dest": id2}] = weight
+            self.edges[{"src": id1,"dest": id2}] = Edge(id1, id2, weight)
             self.mc += 1
             return True
 
