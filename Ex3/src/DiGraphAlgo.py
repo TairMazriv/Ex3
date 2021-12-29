@@ -29,6 +29,36 @@ class DiGraphAlgo(GraphAlgoInterface):
 
     def save_to_json(self, file_name: str) -> bool:
         pass
+    def Dijkstra(self, g: DiGraph, start: Node, dest: Node) -> set:
+        visited = {start: Node}
+        path = defaultdict(list)
+
+        nodes = set(self._GRAPH.get_all_v())
+
+        while nodes:
+            minNode = None
+            for node in nodes:
+                if node in visited:
+                    if minNode is None:
+                        minNode = node
+                    elif visited[node] < visited[minNode]:
+                        minNode = node
+            if minNode is None:
+                break
+
+            nodes.remove(minNode)
+            currentWeight = visited[minNode]
+
+            for edge in self._GRAPH.edges[minNode]:
+                weight = currentWeight + self._GRAPH.distances[(minNode, edge)]
+                if edge not in visited or weight < visited[edge]:
+                    visited[edge] = weight
+                    path[edge].append(minNode)
+
+        return visited, path
+
+    def shortest_path(self, id1: int, id2: int) -> (float, list):
+        pass
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         pass
