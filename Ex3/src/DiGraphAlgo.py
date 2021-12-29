@@ -23,12 +23,20 @@ class DiGraphAlgo(GraphAlgoInterface):
                     graph.add_node(node["id"], node["pos"])
                 for edge in load["Edges"]:
                     graph.add_edge(edge["src"], edge["dest"], edge["w"])
-                return graph
+                DiGraphAlgo(self, graph)
+            return True
         except IOError as er:
             print(er)
+            return False
 
     def save_to_json(self, file_name: str) -> bool:
-        pass
+        try:
+            with open(file_name, "w") as f:
+                json.dump(self, indent=4, fp=f, default=lambda a: a.__dict__)
+        except IOError as er:
+            print(er)
+            return False
+
     def Dijkstra(self, g: DiGraph, start: Node, dest: Node) -> set:
         visited = {start: Node}
         path = defaultdict(list)
@@ -56,9 +64,6 @@ class DiGraphAlgo(GraphAlgoInterface):
                     path[edge].append(minNode)
 
         return visited, path
-
-    def shortest_path(self, id1: int, id2: int) -> (float, list):
-        pass
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         pass
