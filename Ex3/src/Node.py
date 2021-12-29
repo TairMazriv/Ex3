@@ -1,13 +1,13 @@
 class Node(object):
-    def __init__(self, id:int, pos:tuple):
-        self.id = id
+    def __init__(self, pos:tuple, id:int):
         self.pos = pos
+        self.id = id
 
     def __str__(self):
-        return f"id:{self.id} pos:{self.pos}"
+        return f"pos:{self.pos} , id:{self.id}"
 
     def __repr__(self):
-        return f"id:{self.id} pos:{self.pos}"
+        return f"pos:{self.pos} , id:{self.id}"
 
     def getId(self):
         return self.id
@@ -20,5 +20,3 @@ class Node(object):
 
     def setPos(self, pos):
         self.pos = pos
-
-

@@ -1,25 +1,20 @@
 class Edge(object):
-    def __init__(self, src:int, dest:int, w:float):
+    def __init__(self, src:int, w:float, dest:int):
         self.src = src
-        self.dest = dest
         self.w = w
+        self.dest = dest
 
     def __str__(self):
-        return f"src:{self.src} dst:{self.dst} weight:{self.w}"
+        return f" src:{self.src} , w:{self.w} , dest:{self.dest}"
 
     def __repr__(self):
-        return f"src:{self.src} dst:{self.dst} weight:{self.w}"
+        return f" src:{self.src} , w:{self.w} , dest:{self.dest}"
 
     def getSrc(self):
         return self.src
 
-    # def setId(self, id):
-    #     self.id = id
-
-    def getDst(self):
+    def getDest(self):
         return self.dest
 
-    # def setPos(self, pos):
-    #     self.pos = pos
     def getWeight(self):
         return self.w
