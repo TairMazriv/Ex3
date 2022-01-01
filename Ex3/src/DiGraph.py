@@ -4,9 +4,9 @@ from Node import Node
 
 class DiGraph(GraphInterface):
 
-    def __init__(self, nodes: dict, edges: dict):
-        self.nodes = nodes
-        self.edges = edges
+    def __init__(self):
+        self.nodes = {}
+        self.edges = {}
         self.mc = 0
 
     def __str__(self):
@@ -30,21 +30,15 @@ class DiGraph(GraphInterface):
     def all_in_edges_of_node(self, id1: int) -> dict:
         dict = {}
         for e in self.edges:
-            if e["dest"] == id1:
-                a = {}
-                a["other_node_id"] = e["src"]
-                a["weight"] = e["w"]
-                dict[len(dict)] = a
-                return dict
+            if self.edges[e]["dest"] == id1:
+                dict[len(dict)] = {"other_node_id": self.edges[e]["src"], "weight": self.edges[e]["w"]}
+        return dict
 
     def all_out_edges_of_node(self, id1: int) -> dict:
         dict = {}
         for e in self.edges:
-            if e["src"] == id1:
-                a = {}
-                a["other_node_id"] = e["dest"]
-                a["weight"] = e["w"]
-                dict[len(dict)] = a
+            if self.edges[e]["src"] == id1:
+                dict[len(dict)] = {"other_node_id": self.edges[e]["dest"], "weight": self.edges[e]["w"]}
         return dict
 
     def get_mc(self) -> int:
@@ -52,7 +46,7 @@ class DiGraph(GraphInterface):
 
     def add_edge(self, id1: int, id2: int, weight: float) -> bool:
         for e in self.edges:
-            if e["src"]==id1 and e["dest"]==id2:
+            if self.edges[e]["src"]==id1 and self.edges[e]["dest"]==id2:
                 return False
         self.edges[self.e_size()] = {"src":id1,"w":weight, "dest":id2}
         self.mc += 1
@@ -62,34 +56,36 @@ class DiGraph(GraphInterface):
         if node_id in self.nodes.keys():
             return False
         else:
-            self.nodes[node_id] = Node(node_id, pos)
+            self.nodes[node_id] = Node(pos,node_id)
             self.mc += 1
             return True
 
     def remove_node(self, node_id: int) -> bool:
         if node_id in self.nodes.keys():
             self.nodes.pop(node_id)
-            for key in self.edges.keys():
-                if node_id in key:
-                    self.edges.pop(key)
-            self.mc +=1
-            return True
-        else:
-            return False
+            for e in self.edges:
+                if node_id==self.edges[e]["src"] or node_id==self.edges[e]["dest"]:
+                    del self.edges[e]
+                self.mc +=1
+                return True
+        return False
 
     def remove_edge(self, node_id1: int, node_id2: int) -> bool:
-        if {"src": node_id1, "dest": node_id2} in self.edges.keys():
-            self.edges.pop({"src": node_id1, "dest": node_id2})
-            self.mc += 1
-            return True
+        for e in self.edges:
+            if self.edges[e]["src"]==node_id1 and self.edges[e]["dest"]==node_id2:
+                self.edges.pop(e)
+                self.mc += 1
+                return True
         else:
             return False
-
 if __name__ == '__main__':
-    edges = [{"src":1,"w":2, "dest":2}, {"src":0,"w":2, "dest":2}]
-    # , {"src": 1, "dest": 2}: Edge(1, 1, 2), {"src": 2, "dest": 0}: Edge(2, 1, 0)
-    nodes = {0:Node("0,1,2", 0), 1: Node("2,3,5", 1), 2: Node("0.3,2,1",2)}
-    d = DiGraph(nodes, edges)
-    d.add_edge(0,1,3)
-    print(d)
-    # print(d.e_size())
+    g = DiGraph()
+    for n in range(4):
+        g.add_node(n)
+    g.add_edge(0, 1, 1)
+    g.add_edge(1, 0, 1.1)
+    g.add_edge(1, 2, 1.3)
+    g.add_edge(2, 3, 1.1)
+    g.add_edge(1, 3, 1.9)
+    g.add_edge(2, 1, 4)
+    print(g.all_in_edges_of_node(1))
