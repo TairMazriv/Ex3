@@ -3,9 +3,12 @@ import sys
 from collections import defaultdict
 from typing import List
 import threading, queue
+from src import DiGraph,GraphInterface,GraphAlgoInterface,Node,Edge
 from DiGraph import DiGraph
 import GraphInterface, Node
 from GraphAlgoInterface import GraphAlgoInterface
+from DiGraph import DiGraph
+from Node import Node
 
 
 class DiGraphAlgo(GraphAlgoInterface):
@@ -39,7 +42,7 @@ class DiGraphAlgo(GraphAlgoInterface):
             return False
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
-        a = dijkstra(self._GRAPH, id1, id2)
+        a = self.dijkstra(self._GRAPH, id1, id2)
         visited = a[0]
         path = a[1]
         ans = []
@@ -63,7 +66,7 @@ class DiGraphAlgo(GraphAlgoInterface):
         temp = node_lst[0]
         result.append(self._GRAPH.nodes.get(citiesdata.pop(0)))
         while len(citiesdata) >= 1:
-            min = sys.Max_Value
+            min = sys.Maxint
             same = -1
             place = -1
             for i in range(len(citiesdata)):
@@ -85,36 +88,66 @@ class DiGraphAlgo(GraphAlgoInterface):
         return result
 
     def centerPoint(self) -> (int, float):
-        super().centerPoint()
+        min = sys.float_info.max
+        max = sys.float_info.min
+        ans = 0
+        for i in range(len(self._GRAPH.nodes)):
+            for j in range(len(self._GRAPH.nodes)):
+                if j != i:
+                    temp = self.shortest_path(j, i)[0]
+                    if temp > max:
+                        max = temp
+            center = max
+            if center < min:
+                min = center
+                ans = self._GRAPH.nodes[i]
+        return (ans, min)
 
     def plot_graph(self) -> None:
         pass
 
+    def dijkstra(self, g: DiGraph, start: int, dest: int) -> (dict, list):
+        visited = {start: int}
+        path = defaultdict(list)
 
-def dijkstra(self, g: DiGraph, start: int, dest: int) -> (dict, list):
-    visited = {start: int}
-    path = defaultdict(list)
+        nodes = set(g.get_all_v())
 
-    nodes = set(g.get_all_v())
+        while nodes:
+            minNode = None
+            for node in nodes:
+                if node in visited:
+                    if minNode is None:
+                        minNode = node
+                    elif visited[node] < visited[minNode]:
+                        minNode = node
+            if minNode is None or minNode == dest:
+                break
 
-    while nodes:
-        minNode = None
-        for node in nodes:
-            if node in visited:
-                if minNode is None:
-                    minNode = node
-                elif visited[node] < visited[minNode]:
-                    minNode = node
-        if minNode is None or minNode == dest:
-            break
+            nodes.remove(minNode)
+            currentWeight = visited[minNode]
 
-        nodes.remove(minNode)
-        currentWeight = visited[minNode]
+            for edge in range(len(g.all_out_edges_of_node(minNode))):
+                weight = currentWeight + g.all_out_edges_of_node(minNode).get(edge)
+                if edge not in visited or weight < visited[edge]:
+                    visited[edge] = weight
+                    path[edge].append(minNode)
 
-        for edge in g.edges[minNode]:
-            weight = currentWeight + g.distances[(minNode, edge)]
-            if edge not in visited or weight < visited[edge]:
-                visited[edge] = weight
-                path[edge].append(minNode)
+        return visited, path
 
-    return visited, path
+
+if __name__ == '__main__':
+    edges = [{"src": 0, "w": 1, "dest": 1}, {"src": 1, "w": 2, "dest": 4}]
+    # , {"src": 1, "dest": 2}: Edge(1, 1, 2), {"src": 2, "dest": 0}: Edge(2, 1, 0)
+    nodes = {0:Node("0,1,2", 0), 1: Node("2,3,5", 1), 2: Node("0.3,2,1",2)}
+d = DiGraph(nodes, edges)
+print(d)
+g_algo = DiGraphAlgo(d)
+# g_algo.addNode(0)
+# g_algo.addNode(1)
+# g_algo.addNode(2)
+# g_algo.addEdge(0, 1, 1)
+# g_algo.addEdge(1, 2, 4)
+g_algo.shortest_path(1,2)
+# #        (1, [0, 1])
+# #        >>> g_algo.shortestPath(0,2)
+# #        (5, [0, 1, 2])
