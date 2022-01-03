@@ -12,8 +12,8 @@ from Node import Node
 
 
 class GraphAlgo(GraphAlgoInterface):
-    def __init__(self, g=DiGraph()):
-        self.graph = DiGraph()
+    def __init__(self, g):
+        self._GRAPH = g
 
     def __str__(self):
         return f"graph:{self.graph}"
@@ -122,32 +122,67 @@ class GraphAlgo(GraphAlgoInterface):
         pass
 
     def dijkstra(self, g: DiGraph, start: int, dest: int) -> (dict, list):
-        visited = {start: int}
+        unvisited = list(self._GRAPH.nodes.keys())
+        visited = {i: float('inf') for i in unvisited}
         path = defaultdict(list)
 
-        nodes = set(g.get_all_v())
+        current = None
+        # let's find the node with the lowest weight value
+        for node in unvisited:
+            if current == None:
+                current = node
+            elif visited[node] < visited[current]:
+                current = node
 
-        while nodes:
-            minNode = None
-            for node in nodes:
-                if node in visited:
-                    if minNode is None:
-                        minNode = node
-                    elif visited[node] < visited[minNode]:
-                        minNode = node
-            if minNode is None or minNode == dest:
-                break
 
-            nodes.remove(minNode)
-            currentWeight = visited[minNode]
+            # if minNode is None or minNode == dest:
+            #     break
 
-            for edge in range(len(g.all_out_edges_of_node(minNode))):
-                weight = currentWeight + g.all_out_edges_of_node(minNode).get(edge)
-                if edge not in visited or weight < visited[edge]:
-                    visited[edge] = weight
-                    path[edge].append(minNode)
+            # nodes.remove(minNode)
+            currentWeight = visited[current]
+
+            neighbors = self._GRAPH.all_out_edges_of_node(current)
+
+            for i in range(len(neighbors)):
+                m = neighbors[i]
+                w = m["weight"]
+
+                value = currentWeight + w
+                if value < visited[m["weight"]]:
+                    visited[m["weight"]] = value
+                    path[m["weight"]] = current
+
+        unvisited.remove(current)
 
         return visited, path
+    # unvisited = list(self._GRAPH.nodes.keys())
+    #
+    # shortest_from_src = {i: float('inf') for i in unvisited}  # dist between src and other nodes
+    # shortest_from_src[start] = 0  # dist from src to itself is 0
+    #
+    # previous_nodes = {}
+    #
+    # while unvisited:
+    #     current = None
+    #     # let's find the node with the lowest weight value
+    #     for node in unvisited:
+    #         if current == None:
+    #             current = node
+    #         elif shortest_from_src[node] < shortest_from_src[current]:
+    #             current = node
+    #
+    #     neighbors = self._GRAPH.all_out_edges_of_node(current)
+    #
+    #     for i in range(len(neighbors)):
+    #         m = list(neighbors[i])
+    #         value = shortest_from_src[current] + neighbors[i].get(m[0])
+    #         if value < shortest_from_src[m[1]]:
+    #             shortest_from_src[m[1]] = value
+    #             previous_nodes[m[1]] = current
+    #
+    #     unvisited.remove(current)
+    #
+    # return previous_nodes, shortest_from_src
 
 
 if __name__ == '__main__':
@@ -162,7 +197,8 @@ g_algo = GraphAlgo(d)
 # g_algo.addNode(2)
 # g_algo.addEdge(0, 1, 1)
 # g_algo.addEdge(1, 2, 4)
-g_algo.shortest_path(1, 2)
+print(g_algo.dijkstra(d,1, 2))
+# g_algo.shortest_path()
 # #        (1, [0, 1])
 # #        >>> g_algo.shortestPath(0,2)
 # #        (5, [0, 1, 2])
