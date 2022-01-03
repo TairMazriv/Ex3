@@ -3,23 +3,25 @@ import sys
 from collections import defaultdict
 from typing import List
 import threading, queue
-from src import DiGraph, GraphInterface, GraphAlgoInterface, Node, Edge
+import DiGraph, GraphInterface, GraphAlgoInterface, Node, Edge
 from DiGraph import DiGraph
 import GraphInterface, Node
 from GraphAlgoInterface import GraphAlgoInterface
 from DiGraph import DiGraph
 from Node import Node
+import random
+import matplotlib.pyplot as plt
 
 
 class GraphAlgo(GraphAlgoInterface):
-    def __init__(self ):
-        self._GRAPH = DiGraph
+    def __init__(self, g=DiGraph()):
+        self._GRAPH = g
 
     def __str__(self):
-        return f"graph:{self.graph}"
+        return f"graph:{self._GRAPH}"
 
     def __repr__(self):
-        return f"graph:{self.graph}"
+        return f"graph:{self._GRAPH}"
 
     def get_graph(self) -> GraphInterface:
         return self._GRAPH
@@ -44,10 +46,10 @@ class GraphAlgo(GraphAlgoInterface):
             data = {}
             data['Edges'] = []
             data['Nodes'] = []
-            for e in self.graph.edges:
+            for e in self._GRAPH.edges:
                 data['Edges'].append(self.graph.edges[e])
-            for n in self.graph.nodes:
-                node = {'pos': self.graph.nodes[n].pos, 'id': self.graph.nodes[n].id}
+            for n in self._GRAPH.nodes:
+                node = {'pos': self._GRAPH.nodes[n].pos, 'id': self._GRAPH.nodes[n].id}
                 data['Nodes'].append(node)
             print(data)
             with open(file_name, 'w') as outfile:
@@ -60,21 +62,15 @@ class GraphAlgo(GraphAlgoInterface):
         a = self.dijkstra(self._GRAPH, id1, id2)
         visited = a[0]
         path = a[1]
-        # if there is no path
-        if visited.get(id2) == float('inf'):
-            return float('inf'), []
         ans = []
+        ansdist = 0
+        for x in visited:
+            ans.append(visited.get(x))
 
-        node = id2
+        for x in path:
+            ansdist += path.get(x)
 
-        while node != id1:
-            ans.append(node)
-            node = path.get(node)
-
-        ans.append(id1)
-        result = ans[::-1]
-
-        return a[0][id2], result
+        return (ansdist, ans)
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         citiesdata = []
@@ -125,53 +121,123 @@ class GraphAlgo(GraphAlgoInterface):
         return (ans, min)
 
     def plot_graph(self) -> None:
-        pass
+        for n in self._GRAPH.nodes.values():
+            if n.getPos() != None:
+                x = n.getPos()[0]
+                y = n.getPos()[1]
+                z = n.getPos()[2]
+            else:
+                x = random.randrange(0, 100)
+                y = random.randrange(0, 100)
+                z = random.randrange(0, 100)
+                n.setPos((x, y, z))
+            plt.plot(float(x), float(y), markersize=4, marker="o", color="red")
+            # plt.text(float(x), float(y), str(n.getId), color="blue", fontsize=6)
+        for e in self._GRAPH.edges.values():
+            src = self._GRAPH.nodes.get(e["src"])
+            dest = self._GRAPH.nodes.get(e["dest"])
+            srcX = src.getPos()[0]
+            srcY = src.getPos()[1]
+            destX = dest.getPos()[0]
+            destY = dest.getPos()[1]
+            plt.annotate("", xy=(float(srcX), float(srcY)), xytext=(float(destX), float(destY)),
+                         arrowprops=dict(arrowstyle="<-", edgecolor="yellow", lw=1.0))
+        plt.show()
 
     def dijkstra(self, g: DiGraph, start: int, dest: int) -> (dict, list):
         unvisited = list(self._GRAPH.nodes.keys())
         visited = {i: float('inf') for i in unvisited}
-        path = {}
-        visited[start] = 0
-        minNode = None
+        path = defaultdict(list)
+
+        current = None
         # let's find the node with the lowest weight value
         for node in unvisited:
-            if minNode == None:
-                minNode = node
-            elif visited[node] < visited[minNode]:
-                minNode = node
+            if current == None:
+                current = node
+            elif visited[node] < visited[current]:
+                current = node
 
 
             # if minNode is None or minNode == dest:
             #     break
 
             # nodes.remove(minNode)
-            currentWeight = visited[minNode]
+            currentWeight = visited[current]
 
-            neighbors = self._GRAPH.all_out_edges_of_node(minNode)
+            neighbors = self._GRAPH.all_out_edges_of_node(current)
 
             for i in range(len(neighbors)):
                 m = neighbors[i]
                 w = m["weight"]
-                value = visited[minNode] + w
 
-                # value = currentWeight + w
-                if value < visited[w]:
+                value = currentWeight + w
+                if value < visited[m["weight"]]:
                     visited[m["weight"]] = value
-                    path[m["weight"]] = minNode
+                    path[m["weight"]] = current
 
-        unvisited.remove(minNode)
+        unvisited.remove(current)
 
         return visited, path
+    # unvisited = list(self._GRAPH.nodes.keys())
+    #
+    # shortest_from_src = {i: float('inf') for i in unvisited}  # dist between src and other nodes
+    # shortest_from_src[start] = 0  # dist from src to itself is 0
+    #
+    # previous_nodes = {}
+    #
+    # while unvisited:
+    #     current = None
+    #     # let's find the node with the lowest weight value
+    #     for node in unvisited:
+    #         if current == None:
+    #             current = node
+    #         elif shortest_from_src[node] < shortest_from_src[current]:
+    #             current = node
+    #
+    #     neighbors = self._GRAPH.all_out_edges_of_node(current)
+    #
+    #     for i in range(len(neighbors)):
+    #         m = list(neighbors[i])
+    #         value = shortest_from_src[current] + neighbors[i].get(m[0])
+    #         if value < shortest_from_src[m[1]]:
+    #             shortest_from_src[m[1]] = value
+    #             previous_nodes[m[1]] = current
+    #
+    #     unvisited.remove(current)
+    #
+    # return previous_nodes, shortest_from_src
 
 
-# if __name__ == '__main__':
-#     edges = [{"src": 0, "w": 1, "dest": 1}, {"src": 1, "w": 2, "dest": 4}]
-#     # , {"src": 1, "dest": 2}: Edge(1, 1, 2), {"src": 2, "dest": 0}: Edge(2, 1, 0)
-#     nodes = {0: Node("0,1,2", 0), 1: Node("2,3,5", 1), 2: Node("0.3,2,1", 2)}
+if __name__ == '__main__':
+    g_algo = GraphAlgo()
+    file = r"C:\Users\User\PycharmProjects\pythonProject\Ex3\data\A0.json"
+    g_algo.load_from_json(file)
+    for n in g_algo.get_graph().nodes.values():
+        if n.getPos() != None:
+            x =(dict)(n.getPos())
+            # y = n.getPos()[1]
+            # z = n.getPos()[2]
+        else:
+            x = random.randrange(0, 100)
+            y = random.randrange(0, 100)
+            z = random.randrange(0, 100)
+        print(x)
+        # print(y)
+        # print(z)
+    # print(g_algo.get_graph())
+    # g_algo.plot_graph()
+    # edges = [{"src": 0, "w": 1, "dest": 1}, {"src": 1, "w": 2, "dest": 4}]
+    # , {"src": 1, "dest": 2}: Edge(1, 1, 2), {"src": 2, "dest": 0}: Edge(2, 1, 0)
+    # nodes = {0: Node("0,1,2", 0), 1: Node("2,3,5", 1), 2: Node("0.3,2,1", 2)}
 # d = DiGraph(nodes, edges)
 # print(d)
 # g_algo = GraphAlgo(d)
-# print(g_algo.shortest_path(0,2))
+# g_algo.addNode(0)
+# g_algo.addNode(1)
+# g_algo.addNode(2)
+# g_algo.addEdge(0, 1, 1)
+# g_algo.addEdge(1, 2, 4)
+# print(g_algo.dijkstra(d,1, 2))
 # g_algo.shortest_path()
 # #        (1, [0, 1])
 # #        >>> g_algo.shortestPath(0,2)
