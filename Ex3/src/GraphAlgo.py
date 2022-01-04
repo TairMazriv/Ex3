@@ -32,7 +32,8 @@ class GraphAlgo(GraphAlgoInterface):
                 load = json.load(fn)
                 # graph = DiGraph()
                 for node in load["Nodes"]:
-                    self._GRAPH.add_node(node["id"], node["pos"])
+                    pos = (node["pos"]).split(',')
+                    self._GRAPH.add_node(node["id"], pos)
                 for edge in load["Edges"]:
                     self._GRAPH.add_edge(edge["src"], edge["dest"], edge["w"])
                 # GraphAlgo(self, graph)
@@ -47,7 +48,7 @@ class GraphAlgo(GraphAlgoInterface):
             data['Edges'] = []
             data['Nodes'] = []
             for e in self._GRAPH.edges:
-                data['Edges'].append(self.graph.edges[e])
+                data['Edges'].append(self._GRAPH.edges[e])
             for n in self._GRAPH.nodes:
                 node = {'pos': self._GRAPH.nodes[n].pos, 'id': self._GRAPH.nodes[n].id}
                 data['Nodes'].append(node)
@@ -131,8 +132,8 @@ class GraphAlgo(GraphAlgoInterface):
                 y = random.randrange(0, 100)
                 z = random.randrange(0, 100)
                 n.setPos((x, y, z))
-            plt.plot(float(x), float(y), markersize=4, marker="o", color="red")
-            # plt.text(float(x), float(y), str(n.getId), color="blue", fontsize=6)
+            plt.plot(float(x), float(y), markersize=4, marker="o", color="black")
+            plt.text(float(x), float(y), n.getId(), color="blue", fontsize=8)
         for e in self._GRAPH.edges.values():
             src = self._GRAPH.nodes.get(e["src"])
             dest = self._GRAPH.nodes.get(e["dest"])
@@ -141,7 +142,7 @@ class GraphAlgo(GraphAlgoInterface):
             destX = dest.getPos()[0]
             destY = dest.getPos()[1]
             plt.annotate("", xy=(float(srcX), float(srcY)), xytext=(float(destX), float(destY)),
-                         arrowprops=dict(arrowstyle="<-", edgecolor="yellow", lw=1.0))
+                         arrowprops=dict(arrowstyle="-", edgecolor="black", lw=1.0))
         plt.show()
 
     def dijkstra(self, g: DiGraph, start: int, dest: int) -> (dict, list):
@@ -211,22 +212,9 @@ class GraphAlgo(GraphAlgoInterface):
 
 if __name__ == '__main__':
     g_algo = GraphAlgo()
-    file = r"C:\Users\User\PycharmProjects\pythonProject\Ex3\data\A0.json"
+    file = r"C:\Users\User\PycharmProjects\pythonProject\Ex3\data\A5.json"
     g_algo.load_from_json(file)
-    for n in g_algo.get_graph().nodes.values():
-        if n.getPos() != None:
-            x =(dict)(n.getPos())
-            # y = n.getPos()[1]
-            # z = n.getPos()[2]
-        else:
-            x = random.randrange(0, 100)
-            y = random.randrange(0, 100)
-            z = random.randrange(0, 100)
-        print(x)
-        # print(y)
-        # print(z)
-    # print(g_algo.get_graph())
-    # g_algo.plot_graph()
+    print(g_algo.get_graph())
     # edges = [{"src": 0, "w": 1, "dest": 1}, {"src": 1, "w": 2, "dest": 4}]
     # , {"src": 1, "dest": 2}: Edge(1, 1, 2), {"src": 2, "dest": 0}: Edge(2, 1, 0)
     # nodes = {0: Node("0,1,2", 0), 1: Node("2,3,5", 1), 2: Node("0.3,2,1", 2)}
