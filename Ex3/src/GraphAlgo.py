@@ -169,12 +169,13 @@ class GraphAlgo(GraphAlgoInterface):
             for i in range(len(neighbors)):
                 m = neighbors[i]
                 w = m["weight"]
+                value = visited[minNode] + w
 
-                value = currentWeight + w
-                if value < visited[m["weight"]]:
-                    visited[m["weight"]] = value
-                    path[m["weight"]] = current
-
+                # value = currentWeight + w
+                v = visited[m["other_node_id"]]
+                if value < v["weight"]:
+                    visited[minNode]["weight"] = value
+                    path[m]["weight"] = minNode
         unvisited.remove(current)
 
         return visited, path
