@@ -59,19 +59,25 @@ class GraphAlgo(GraphAlgoInterface):
             print(er)
             return False
 
-    def shortest_path(self, id1: int, id2: int) -> (float, list):
-        a = self.dijkstra(self._GRAPH, id1, id2)
+        def shortest_path(self, id1: int, id2: int) -> (float, list):
+        a = self.dijkstra(id1, id2)
         visited = a[0]
         path = a[1]
+        # if there is no path
+        if visited.get(id2) == float('inf'):
+            return float('inf'), []
         ans = []
-        ansdist = 0
-        for x in visited:
-            ans.append(visited.get(x))
 
-        for x in path:
-            ansdist += path.get(x)
+        node = id2
 
-        return (ansdist, ans)
+        while node != id1:
+            ans.append(node)
+            node = visited.get(node)
+
+        ans.append(id1)
+        result = ans[::-1]
+
+        return a[0][id2], result
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         citiesdata = []
@@ -145,69 +151,34 @@ class GraphAlgo(GraphAlgoInterface):
                          arrowprops=dict(arrowstyle="-", edgecolor="black", lw=1.0))
         plt.show()
 
-    def dijkstra(self, g: DiGraph, start: int, dest: int) -> (dict, list):
+       def dijkstra(self, start: int, dest: int) -> (dict, list):
         unvisited = list(self._GRAPH.nodes.keys())
         visited = {i: float('inf') for i in unvisited}
-        path = defaultdict(list)
-
-        current = None
+        path = {}
+        visited[start] = 0
+        while unvisited:
+            minNode = None
         # let's find the node with the lowest weight value
-        for node in unvisited:
-            if current == None:
-                current = node
-            elif visited[node] < visited[current]:
-                current = node
+            for node in unvisited:
+                if minNode == None:
+                    minNode = node
+                elif visited[node] < visited[minNode]:
+                    minNode = node
 
-
-            # if minNode is None or minNode == dest:
-            #     break
-
-            # nodes.remove(minNode)
-            currentWeight = visited[current]
-
-            neighbors = self._GRAPH.all_out_edges_of_node(current)
+            neighbors = self._GRAPH.all_out_edges_of_node(minNode)
 
             for i in range(len(neighbors)):
                 m = neighbors[i]
                 w = m["weight"]
                 value = visited[minNode] + w
+                oni = m["other_node_id"]
+                if value < visited[oni]:
+                    visited[oni] = value
+                    visited[oni] = minNode
 
-                # value = currentWeight + w
-                v = visited[m["other_node_id"]]
-                if value < v["weight"]:
-                    visited[minNode]["weight"] = value
-                    path[m]["weight"] = minNode
-        unvisited.remove(current)
+            unvisited.remove(minNode)
 
         return visited, path
-    # unvisited = list(self._GRAPH.nodes.keys())
-    #
-    # shortest_from_src = {i: float('inf') for i in unvisited}  # dist between src and other nodes
-    # shortest_from_src[start] = 0  # dist from src to itself is 0
-    #
-    # previous_nodes = {}
-    #
-    # while unvisited:
-    #     current = None
-    #     # let's find the node with the lowest weight value
-    #     for node in unvisited:
-    #         if current == None:
-    #             current = node
-    #         elif shortest_from_src[node] < shortest_from_src[current]:
-    #             current = node
-    #
-    #     neighbors = self._GRAPH.all_out_edges_of_node(current)
-    #
-    #     for i in range(len(neighbors)):
-    #         m = list(neighbors[i])
-    #         value = shortest_from_src[current] + neighbors[i].get(m[0])
-    #         if value < shortest_from_src[m[1]]:
-    #             shortest_from_src[m[1]] = value
-    #             previous_nodes[m[1]] = current
-    #
-    #     unvisited.remove(current)
-    #
-    # return previous_nodes, shortest_from_src
 
 
 if __name__ == '__main__':
