@@ -74,20 +74,4 @@ class comperation(TestCase):
         self.assertEqual(g_algoT.centerPoint(), (ansT, minT))
 
     def test_TSP(self):
-        file1 = r"C:\Users\User\PycharmProjects\pythonProject\Ex3\data\A1.json"
-        g_algo1 = GraphAlgo()
-        g_algo1.load_from_json(file1)
-        ans1, min1 = 8, 9.925289024973141
-        self.assertEqual(g_algo1.centerPoint(), (ans1, min1))
-
-        file4 = r"C:\Users\User\PycharmProjects\pythonProject\Ex3\data\A4.json"
-        g_algo4 = GraphAlgo()
-        g_algo4.load_from_json(file4)
-        ans4, min4 = 6, 7.597344259985743
-        self.assertEqual(g_algo4.centerPoint(), (ans4, min4))
-
-        fileT = r"C:\Users\User\PycharmProjects\pythonProject\Ex3\data\T0.json"
-        g_algoT = GraphAlgo()
-        g_algoT.load_from_json(fileT)
-        ansT, minT = 6, 7.597344259985743
-        self.assertEqual(g_algoT.centerPoint(), (ansT, minT))
+        pass
