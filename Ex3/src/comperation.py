@@ -19,7 +19,7 @@ class comperation(TestCase):
         g_algo4 = GraphAlgo()
         self.assertTrue(g_algo4.load_from_json(file4))
 
-        fileT = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\T0.json"
+        fileT = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\A5.json"
         g_algoT = GraphAlgo()
         self.assertTrue(g_algoT.load_from_json(fileT))
         stop = timeit.default_timer()
@@ -38,7 +38,7 @@ class comperation(TestCase):
         g_algo4.load_from_json(file4)
         self.assertTrue(g_algo4.save_to_json('A4_new'))
 
-        fileT = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\T0.json"
+        fileT = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\A5.json"
         g_algoT = GraphAlgo()
         g_algoT.load_from_json(fileT)
         self.assertTrue(g_algoT.save_to_json('T0_new'))
@@ -51,20 +51,20 @@ class comperation(TestCase):
         file1 = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\A1.json"
         g_algo1 = GraphAlgo()
         g_algo1.load_from_json(file1)
-        self.assertEqual(g_algo1.shortest_path(0, 8), (6.810285204957641, [0, 16, 15, 6, 7, 8]))
-        self.assertEqual(g_algo1.shortest_path(5, 16), (4.741151833934769, [5, 6, 15, 16]))
+        self.assertEqual(g_algo1.shortest_path(0, 8), (0.9046810940028001, [0, 8]))
+        self.assertEqual(g_algo1.shortest_path(5, 16), (2.3862978099481547, [5, 25, 16]))
 
         file4 = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\A4.json"
         g_algo4 = GraphAlgo()
         g_algo4.load_from_json(file4)
-        self.assertEqual(g_algo4.shortest_path(8, 25), (5.744250967818573, [8, 7, 6, 5, 25]))
-        self.assertEqual(g_algo4.shortest_path(1, 39), (9.589550839925723, [1, 2, 6, 7, 8, 9, 10, 39]))
+        self.assertEqual(g_algo4.shortest_path(8, 25), (3.3560955442187255, [8, 0, 16, 25]))
+        self.assertEqual(g_algo4.shortest_path(1, 39), (1.4687246563734302, [1, 10, 39]))
 
-        fileT = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\T0.json"
+        fileT = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\A5.json"
         g_algoT = GraphAlgo()
         g_algoT.load_from_json(fileT)
-        self.assertEqual(g_algoT.shortest_path(0, 3), (3.032037506070033, [0, 1, 3]))
-        self.assertEqual(g_algoT.shortest_path(1, 2), (1.8015954015822042, [1, 2]))
+        self.assertEqual(g_algoT.shortest_path(0, 3), (2.4826674989991067, [0, 2, 3]))
+        self.assertEqual(g_algoT.shortest_path(1, 2), (1.3230130106118398, [1, 9, 2]))
         stop = timeit.default_timer()
 
         print('Shortest path Time: ', stop - start)
@@ -74,19 +74,19 @@ class comperation(TestCase):
         file1 = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\A1.json"
         g_algo1 = GraphAlgo()
         g_algo1.load_from_json(file1)
-        ans1, min1 = 6, 7.597344259985743
+        ans1, min1 = 41, 8.506995383843982
         self.assertEqual(g_algo1.centerPoint(), (ans1, min1))
 
         file4 = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\A4.json"
         g_algo4 = GraphAlgo()
         g_algo4.load_from_json(file4)
-        ans4, min4 = 6, 7.597344259985743
+        ans4, min4 = 41, 8.506995383843982
         self.assertEqual(g_algo4.centerPoint(), (ans4, min4))
 
-        fileT = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\T0.json"
+        fileT = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\A5.json"
         g_algoT = GraphAlgo()
         g_algoT.load_from_json(fileT)
-        ansT, minT = 6, 7.597344259985743
+        ansT, minT = 41, 8.506995383843982
         self.assertEqual(g_algoT.centerPoint(), (ansT, minT))
         stop = timeit.default_timer()
 
@@ -108,11 +108,11 @@ class comperation(TestCase):
         self.assertEqual(g_algo4.TSP([5,11,21,22,24,30,35]),([5, 25, 24, 23, 22, 21, 0, 1, 2, 30, 31, 32, 33, 35, 36, 8, 9, 10, 11],
         918.6414874311324))
 
-        fileT = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\T0.json"
+        fileT = r"C:\Users\tairm\PycharmProjects\Ex3\src\data\A5.json"
         g_algoT = GraphAlgo()
         g_algoT.load_from_json(fileT)
-        self.assertEqual(g_algoT.TSP([0,3]), ([0, 1, 3], 154.9069145718554))
-        self.assertEqual(g_algoT.TSP([1,2]),([1, 2], 154.9069145718554))
+        self.assertEqual(g_algoT.TSP([0,3,39]), ([0, 2, 3, 4, 12, 10, 39], 511.21013401583815))
+        self.assertEqual(g_algoT.TSP([5,13,26,41]),([5, 13, 25, 26, 27, 15, 39, 40, 41], 766.8152010237575))
         stop = timeit.default_timer()
 
         print('TSP Time: ', stop - start)
